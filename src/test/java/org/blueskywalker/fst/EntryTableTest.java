@@ -4,6 +4,7 @@
  */
 package org.blueskywalker.fst;
 
+import java.net.URL;
 import junit.framework.TestCase;
 
 /**
@@ -12,6 +13,8 @@ import junit.framework.TestCase;
  */
 public class EntryTableTest extends TestCase {
     
+    String fileName;
+    
     public EntryTableTest(String testName) {
         super(testName);
     }
@@ -19,6 +22,8 @@ public class EntryTableTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        String name = "test.txt";
+        fileName = getClass().getClassLoader().getResource(name).getFile();
     }
     
     @Override
@@ -31,9 +36,13 @@ public class EntryTableTest extends TestCase {
      */
     public void testReadFromFile() {
         System.out.println("readFromFile");
-        String name = "test.txt";
+        
+        
+        
+        System.out.println(fileName);
+        
         EntryTable instance = new EntryTable();
-        instance.readFromFile(name);
+        instance.readFromFile(fileName);
         
         assertEquals(10, instance.size());
     }
@@ -46,7 +55,7 @@ public class EntryTableTest extends TestCase {
         EntryTable instance = new EntryTable();
         boolean result = instance.checkUnique();
         assertEquals(false, result);
-        instance.readFromFile("test.txt");
+        instance.readFromFile(fileName);
         result = instance.checkUnique();
         assertEquals(true, result);
     }

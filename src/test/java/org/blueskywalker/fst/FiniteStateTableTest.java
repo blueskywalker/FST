@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
  */
 public class FiniteStateTableTest {
     
+    String fileName;
+    
     public FiniteStateTableTest() {
     }
     
@@ -31,6 +33,7 @@ public class FiniteStateTableTest {
     
     @Before
     public void setUp() {
+        fileName = getClass().getClassLoader().getResource("test.txt").getFile();
     }
     
     @After
@@ -43,9 +46,17 @@ public class FiniteStateTableTest {
     @Test
     public void testBuild() {
         System.out.println("build");
-        String fileName = "";
-        FiniteStateTable instance = null;
+        String fileName = "test.fst";
+        EntryTable entries = new EntryTable();
+        
+        entries.readFromFile(fileName);
+        
+        if(!entries.checkUnique())
+            fail("file content is wrong");
+        
+        FiniteStateTable instance = new FiniteStateTable(entries);
         instance.build(fileName);
+        
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
