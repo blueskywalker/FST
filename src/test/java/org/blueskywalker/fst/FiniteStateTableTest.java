@@ -4,7 +4,11 @@
  */
 package org.blueskywalker.fst;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -57,8 +61,13 @@ public class FiniteStateTableTest {
     public void testBuild() {
         System.out.println("build");
         String fileName = "test.fst";
-
-        instance.build(fileName);
+        try {
+            instance.build(fileName);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
         StringBuilder sb = new StringBuilder();
 

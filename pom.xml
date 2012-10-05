@@ -43,7 +43,7 @@
                         </manifest>
                         <manifestEntries>
                             <mode>development</mode>
-                            <url>${pom.url}</url>
+                            <url>${project.url}</url>
                             <key>value</key>
                         </manifestEntries>
                     </archive>
@@ -55,6 +55,11 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.blueskywalker.fst.BuildFST</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
                 <executions>
                     <execution>
