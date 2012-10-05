@@ -1,7 +1,11 @@
 package org.blueskywalker.fst;
 
-public class StateType {
+import java.io.Serializable;
 
+public class StateType implements Serializable {
+    
+    static final long serialVersionUID = -6319568390308878330L;
+    
     public boolean finished;
     public int size;
     public int location;

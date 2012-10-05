@@ -1,7 +1,10 @@
 package org.blueskywalker.fst;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
@@ -15,14 +18,19 @@ public class FiniteStateTable {
     private ArrayList<StateType> DFA;
     private EntryTable entries;
     private int[] DFAGeneratedNumber = null;
-
-    FiniteStateTable(EntryTable entries) {
+    private FSTFile fstFile;
+    
+    public FiniteStateTable() {
         TransitionTable = new ArrayList<FSTType>(DEFAULT_SIZE);
-        DFA = new ArrayList<StateType>(DEFAULT_SIZE);
+        DFA = new ArrayList<StateType>(DEFAULT_SIZE);       
+    }
+    
+    public FiniteStateTable(EntryTable entries) {
+        this();
         this.entries = entries;
     }
 
-    void build(String fileName) {
+    void build(String fileName) throws FileNotFoundException, IOException {
         // DFA
         logger.info("Building DFA...");
         buildDFA(0, 0, entries.size(), 0);
@@ -68,15 +76,18 @@ public class FiniteStateTable {
 
         /// flattening and
         /// make FST file
-        logger.info("flattening ....");
-        Transformer transformer = new Transformer(this);
-        transformer.transform();
-        logger.info("flattening is done.");
-
+        /*
+         logger.info("flattening ....");
+         Transformer transformer = new Transformer(this);
+         transformer.transform();
+         logger.info("flattening is done.");
+         */
 
         // save
         logger.info("save to FST file..");
-        saveFST2File(fileName, transformer.getFlatFST());
+        //saveFST2File(fileName, transformer.getFlatFST());
+        saveFST2File(fileName);
+        
         logger.info("All jobs are completed!!!");
     }
 
@@ -158,7 +169,7 @@ public class FiniteStateTable {
             DFA.get(root).location = 0;
 
         }
-        
+
         // count transition character			
         subSet = countTransitionChar(start, size, stringPos);
 
@@ -186,13 +197,13 @@ public class FiniteStateTable {
         char lastChar = (char) -1;
         for (int i = 0; i < size; i++) {
             String entry = entries.get(start + i);
-            
-            if(entry.length()<= stringPos) {
+
+            if (entry.length() <= stringPos) {
                 continue;
             }
-            
+
             char currentChar = entry.charAt(stringPos);
-            
+
             if (currentChar != lastChar) {
                 data.add(new TransitionData(currentChar, start + i, 0));
                 lastChar = currentChar;
@@ -205,17 +216,23 @@ public class FiniteStateTable {
         return data;
     }
 
-    void saveFST2File(String fileName, FlatFST fst) {
+    void saveFST2File(String fileName) throws FileNotFoundException, IOException {
 
-        try {
-            FileOutputStream fos = new FileOutputStream(fileName);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(fst);
-            oos.close();
-        } catch (IOException e) {
-            logger.error(e);
-        }
+        
+        FileOutputStream fos = new FileOutputStream(fileName);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        fstFile = new FSTFile(DFA, TransitionTable);
+        oos.writeObject(fstFile);
+        oos.close();
 
+    }
+
+    void readFSTFile(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
+        fstFile = (FSTFile) ois.readObject();
+        ois.close();
+        DFA = fstFile.getState();
+        TransitionTable = fstFile.getFst();
     }
 
     int ofSize(int state) {
