@@ -80,7 +80,7 @@ public class FiniteStateTable {
         logger.info("All jobs are completed!!!");
     }
 
-    public int traverseDFA(int root, int value, StringBuffer str, int pos, int n) {
+    public int traverseDFA(int root, int value, StringBuilder str, int pos, int n) {
         if (ofFinished(root)) {
             n += ofFinished(root) ? 1 : 0;
             str.setLength(pos);
@@ -157,21 +157,21 @@ public class FiniteStateTable {
             DFA.get(root).size = 0;
             DFA.get(root).location = 0;
 
-        } else {
-            // count transition character			
-            subSet = countTransitionChar(start, size, stringPos);
-
-            DFA.get(root).finished = false;
-            DFA.get(root).size = subSet.size();
-            DFA.get(root).location = TransitionTable.size();
-
-            // add TransitionTable
-            for (int i = 0; i < subSet.size(); i++) {
-                TransitionTable.add(
-                        new FSTType(subSet.get(i).transition, 0, DFA.size()));
-                DFA.add(new StateType());
-            }
         }
+        
+        // count transition character			
+        subSet = countTransitionChar(start, size, stringPos);
+
+        DFA.get(root).size = subSet.size();
+        DFA.get(root).location = TransitionTable.size();
+
+        // add TransitionTable
+        for (int i = 0; i < subSet.size(); i++) {
+            TransitionTable.add(
+                    new FSTType(subSet.get(i).transition, 0, DFA.size()));
+            DFA.add(new StateType());
+        }
+
 
         // follow all transition
         for (int i = 0; i < DFA.get(root).size; i++) {
@@ -185,7 +185,14 @@ public class FiniteStateTable {
 
         char lastChar = (char) -1;
         for (int i = 0; i < size; i++) {
-            char currentChar = entries.get(start + i).charAt(stringPos);
+            String entry = entries.get(start + i);
+            
+            if(entry.length()<= stringPos) {
+                continue;
+            }
+            
+            char currentChar = entry.charAt(stringPos);
+            
             if (currentChar != lastChar) {
                 data.add(new TransitionData(currentChar, start + i, 0));
                 lastChar = currentChar;

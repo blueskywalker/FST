@@ -36,9 +36,7 @@ public class EntryTableTest extends TestCase {
      */
     public void testReadFromFile() {
         System.out.println("readFromFile");
-        
-        
-        
+                
         System.out.println(fileName);
         
         EntryTable instance = new EntryTable();
@@ -54,7 +52,7 @@ public class EntryTableTest extends TestCase {
         System.out.println("checkUnique");
         EntryTable instance = new EntryTable();
         boolean result = instance.checkUnique();
-        assertEquals(false, result);
+        assertEquals(true, result);
         instance.readFromFile(fileName);
         result = instance.checkUnique();
         assertEquals(true, result);

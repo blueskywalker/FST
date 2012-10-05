@@ -7,35 +7,45 @@ package org.blueskywalker.fst;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author blueskywalker
  */
 public class FiniteStateTableTest {
-    
+
     String fileName;
-    
+    EntryTable entries;
+    FiniteStateTable instance;
+    private int[] DFAGeneratedNumber = null;
+
     public FiniteStateTableTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
         fileName = getClass().getClassLoader().getResource("test.txt").getFile();
+        entries = new EntryTable();
+        entries.readFromFile(fileName);
+        instance = new FiniteStateTable(entries);
+        if (!entries.checkUnique()) {
+            fail("file content is wrong");
+        }
+
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -47,187 +57,30 @@ public class FiniteStateTableTest {
     public void testBuild() {
         System.out.println("build");
         String fileName = "test.fst";
-        EntryTable entries = new EntryTable();
-        
-        entries.readFromFile(fileName);
-        
-        if(!entries.checkUnique())
-            fail("file content is wrong");
-        
-        FiniteStateTable instance = new FiniteStateTable(entries);
+
         instance.build(fileName);
-        
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        StringBuilder sb = new StringBuilder();
+
+        instance.traverseDFA(0, 0, sb, 0, 0);
+
     }
 
-    /**
-     * Test of traverseDFA method, of class FiniteStateTable.
-     */
-    @Test
-    public void testTraverseDFA() {
-        System.out.println("traverseDFA");
-        int root = 0;
-        int value = 0;
-        StringBuffer str = null;
-        int pos = 0;
-        int n = 0;
-        FiniteStateTable instance = null;
-        int expResult = 0;
-        int result = instance.traverseDFA(root, value, str, pos, n);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of buildDFA method, of class FiniteStateTable.
-     */
     @Test
     public void testBuildDFA() {
-        System.out.println("buildDFA");
-        int root = 0;
-        int start = 0;
-        int size = 0;
-        int stringPos = 0;
-        FiniteStateTable instance = null;
-        instance.buildDFA(root, start, size, stringPos);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
-    /**
-     * Test of saveFST2File method, of class FiniteStateTable.
-     */
-    @Test
-    public void testSaveFST2File() {
-        System.out.println("saveFST2File");
-        String fileName = "";
-        FlatFST fst = null;
-        FiniteStateTable instance = null;
-        instance.saveFST2File(fileName, fst);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        instance.buildDFA(0, 0, entries.size(), 0);
+        
+        int i = 0;
+        System.out.println("DFA");
+        for (StateType s : instance.getDFA()) {
+            System.out.printf("[%d]%d:%b:%d\n", i++, s.size, s.finished, s.location);
+        }
+        i = 0;
+        System.out.println("FST");
+        for (FSTType f : instance.getTransitionTable()) {
+            System.out.printf("[%d]%c:%d:%d\n", i++, f.character, f.value, f.next);
+        }
 
-    /**
-     * Test of ofSize method, of class FiniteStateTable.
-     */
-    @Test
-    public void testOfSize() {
-        System.out.println("ofSize");
-        int state = 0;
-        FiniteStateTable instance = null;
-        int expResult = 0;
-        int result = instance.ofSize(state);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of ofChar method, of class FiniteStateTable.
-     */
-    @Test
-    public void testOfChar() {
-        System.out.println("ofChar");
-        int state = 0;
-        int n = 0;
-        FiniteStateTable instance = null;
-        char expResult = ' ';
-        char result = instance.ofChar(state, n);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of ofValue method, of class FiniteStateTable.
-     */
-    @Test
-    public void testOfValue() {
-        System.out.println("ofValue");
-        int state = 0;
-        int n = 0;
-        FiniteStateTable instance = null;
-        int expResult = 0;
-        int result = instance.ofValue(state, n);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of ofValueSet method, of class FiniteStateTable.
-     */
-    @Test
-    public void testOfValueSet() {
-        System.out.println("ofValueSet");
-        int state = 0;
-        int n = 0;
-        int newValue = 0;
-        FiniteStateTable instance = null;
-        instance.ofValueSet(state, n, newValue);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of ofNext method, of class FiniteStateTable.
-     */
-    @Test
-    public void testOfNext() {
-        System.out.println("ofNext");
-        int state = 0;
-        int n = 0;
-        FiniteStateTable instance = null;
-        int expResult = 0;
-        int result = instance.ofNext(state, n);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getTransitionTable method, of class FiniteStateTable.
-     */
-    @Test
-    public void testGetTransitionTable() {
-        System.out.println("getTransitionTable");
-        FiniteStateTable instance = null;
-        ArrayList expResult = null;
-        ArrayList result = instance.getTransitionTable();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getDFA method, of class FiniteStateTable.
-     */
-    @Test
-    public void testGetDFA() {
-        System.out.println("getDFA");
-        FiniteStateTable instance = null;
-        ArrayList expResult = null;
-        ArrayList result = instance.getDFA();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of ofFinished method, of class FiniteStateTable.
-     */
-    @Test
-    public void testOfFinished() {
-        System.out.println("ofFinished");
-        int state = 0;
-        FiniteStateTable instance = null;
-        boolean expResult = false;
-        boolean result = instance.ofFinished(state);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 }
